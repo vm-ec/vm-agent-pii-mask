@@ -3,7 +3,7 @@ spring:
     name: chat-agent
 
 server:
-  port: 8084
+  port: 8085
 
 wrapper:
   service:

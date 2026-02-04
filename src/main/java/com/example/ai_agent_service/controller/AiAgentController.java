@@ -23,7 +23,7 @@ public class AiAgentController {
 
     @PostMapping("/invoke")
     public AgentResponse invoke(@RequestBody AgentRequest request) {
-        return aiAgentService.process(request.getInput());
+        return aiAgentService.process(request.getInput(), request.getModel());
     }
 
 //    @GetMapping("/metrics")

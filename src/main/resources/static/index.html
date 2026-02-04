@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chatbot</title>
+    <title>AI Agent</title>
     <style>
         * {
             margin: 0;
@@ -127,6 +127,31 @@
             background: white;
             border-top: 1px solid #e0e0e0;
             gap: 10px;
+            flex-wrap: wrap;
+        }
+        .model-selector {
+            width: 100%;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .model-selector label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        .model-selector input[type="radio"] {
+            cursor: pointer;
+        }
+        .model-selector label:has(input:checked) {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
         }
         #userInput {
             flex: 1;
@@ -197,8 +222,8 @@
         <div class="chat-header">
             <div class="bot-icon">🤖</div>
             <div class="header-text">
-                <h2>AI Assistant</h2>
-                <p>Powered by Gemini AI</p>
+                <h2>PII Masking Agent</h2>
+                <p>Powered by OpenAI</p>
             </div>
         </div>
         <div class="chat-messages" id="chatMessages">
@@ -208,6 +233,16 @@
             </div>
         </div>
         <div class="chat-input">
+            <div class="model-selector">
+                <label>
+                    <input type="radio" name="model" value="openai" checked>
+                    OpenAI
+                </label>
+                <label>
+                    <input type="radio" name="model" value="gemini">
+                    Gemini
+                </label>
+            </div>
             <input type="text" id="userInput" placeholder="Type your message..." />
             <button id="sendBtn">Send ✈️</button>
         </div>
@@ -265,6 +300,8 @@
             const message = userInput.value.trim();
             if (!message) return;
 
+            const selectedModel = document.querySelector('input[name="model"]:checked').value;
+
             addMessage(message, true);
             userInput.value = '';
             sendBtn.disabled = true;
@@ -276,12 +313,17 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ input: message })
+                    body: JSON.stringify({ input: message, model: selectedModel })
                 });
 
                 const data = await response.json();
+                console.log('Response data:', data);
                 hideTyping();
-                addMessage(data.output, false);
+                if (data.output) {
+                    addMessage(data.output, false);
+                } else {
+                    addMessage('Received empty response.', false);
+                }
             } catch (error) {
                 hideTyping();
                 addMessage('Sorry, I encountered an error. Please try again.', false);
