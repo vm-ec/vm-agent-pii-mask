@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: chat-agent
+
+server:
+  port: 8084
+
+wrapper:
+  service:
+    url: ${WRAPPER_SERVICE_URL:http://localhost:8083/ai/chat}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
